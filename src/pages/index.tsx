@@ -1,7 +1,19 @@
 import type { NextPage } from "next";
+import Head from "next/head";
 
 const Home: NextPage = () => {
-  return <h1 className="text-4xl text-red-500">Hello World</h1>;
+  return (
+    <div>
+      <Head>
+        <title>Create Next App</title>
+      </Head>
+      <main>
+        <h1 className="text-2xl font-bold">
+          Welcome to <a href="https://nextjs.org">Next.js!</a>
+        </h1>
+      </main>
+    </div>
+  );
 };
 
 export default Home;
