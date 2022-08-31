@@ -8,9 +8,13 @@ const QuestionCreator: React.FC = () => {
   const client = trpc.useContext();
   const { mutate, isLoading } = trpc.useMutation("questions.create", {
     onSuccess: (data) => {
+      console.log("Success on creating poll", data);
       client.invalidateQueries("questions.all");
       if (!inputRef.current) return;
       inputRef.current.value = "";
+    },
+    onError: () => {
+      console.log("Fail to create poll");
     },
   });
 
