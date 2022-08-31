@@ -1,7 +1,9 @@
 import { PollQuestion } from "@prisma/client";
 import type { NextPage } from "next";
-import { useRef } from "react";
+import { ReactElement, useRef } from "react";
+import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
+import { NextPageWithLayout } from "./_app";
 
 const QuestionCreator: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -59,12 +61,12 @@ const QuestionCreator: React.FC = () => {
   );
 };
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const { data, isLoading } = trpc.useQuery(["questions.all"]);
   if (isLoading || !data) return <div>Loading...</div>;
 
   return (
-    <div className="max-w-2xl mx-auto px-5 py-5 flex flex-col gap-14">
+    <div className="flex flex-col gap-14">
       <div>
         <h2 className="text-2xl font-bold mb-5">Active Polls</h2>
         <ul className="space-y-3">
@@ -77,6 +79,10 @@ const Home: NextPage = () => {
       <QuestionCreator />
     </div>
   );
+};
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
 };
 
 export default Home;
