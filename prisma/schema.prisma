@@ -18,5 +18,25 @@ model PollQuestion {
 
   endsAt DateTime?
 
-  question String @db.LongText
+  question String   @db.LongText
+  options  Option[]
+  votes    Vote[]
+}
+
+model Option {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  text           String
+  question       PollQuestion @relation(fields: [pollQuestionId], references: [id], onDelete: Cascade)
+  pollQuestionId String
+  votes          Vote[]
+}
+
+model Vote {
+  id             String       @id @default(cuid())
+  createdAt      DateTime     @default(now())
+  voted          Option       @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId       String
+  question       PollQuestion @relation(fields: [pollQuestionId], references: [id], onDelete: Cascade)
+  pollQuestionId String
 }

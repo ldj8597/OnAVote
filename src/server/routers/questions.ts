@@ -18,6 +18,9 @@ export const questionRouter = trpc
         where: {
           id: input.id,
         },
+        include: {
+          options: true,
+        },
       });
     },
   })

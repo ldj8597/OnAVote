@@ -22,7 +22,14 @@ const QuestionPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  return <h1>Question {data?.question}</h1>;
+  return (
+    <div>
+      <h1 className="text-2xl fonot-bold">{data?.question}</h1>
+      {data?.options.map((option) => (
+        <p key={option.id}>{option.text}</p>
+      ))}
+    </div>
+  );
 };
 
 QuestionPage.getLayout = function getLayout(page: ReactElement) {
