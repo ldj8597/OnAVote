@@ -1,5 +1,6 @@
 // This file contains the root router of tRPC-backend
 import * as trpc from "@trpc/server";
+import { resolve } from "path";
 import { z } from "zod";
 import { prisma } from "../../db/client";
 
@@ -8,6 +9,16 @@ export const questionRouter = trpc
   .query("all", {
     async resolve(req) {
       return await prisma.pollQuestion.findMany();
+    },
+  })
+  .query("by_id", {
+    input: z.object({ id: z.string() }),
+    async resolve({ input }) {
+      return await prisma.pollQuestion.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
     },
   })
   .mutation("create", {

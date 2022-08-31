@@ -1,5 +1,4 @@
-import { PollQuestion } from "@prisma/client";
-import type { NextPage } from "next";
+import Link from "next/link";
 import { ReactElement, useRef } from "react";
 import Layout from "../components/Layout";
 import { trpc } from "../utils/trpc";
@@ -71,7 +70,11 @@ const Home: NextPageWithLayout = () => {
         <h2 className="text-2xl font-bold mb-5">Active Polls</h2>
         <ul className="space-y-3">
           {data.map((q) => (
-            <li key={q.id}>{q.question}</li>
+            <li key={q.id}>
+              <Link href={`/question/${q.id}`}>
+                <a>{q.question}</a>
+              </Link>
+            </li>
           ))}
         </ul>
       </div>
