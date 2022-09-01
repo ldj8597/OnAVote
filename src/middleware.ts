@@ -1,21 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { nanoid } from "nanoid";
 
 export function middleware(request: NextRequest) {
   console.log("---------------------------------------------------");
   console.log(`middlware is running on ${request.nextUrl.pathname}`);
 
   const response = NextResponse.next();
-  const cookie = request.cookies.get("votey");
+  const cookie = request.cookies.get("votey-token");
 
-  if (!cookie) {
-    console.log("no cookie, have to set cookie");
-    const random = Math.random().toString();
-    response.cookies.set("votey", random, {
-      sameSite: "strict",
-    });
-  } else {
-    console.log(`already have cookie: ${cookie}`);
+  if (cookie) {
+    return response;
   }
+
+  response.cookies.set("votey-token", nanoid(), {
+    sameSite: "strict",
+  });
 
   return response;
 }
