@@ -16,7 +16,7 @@ export const questionRouter = createRouter()
     async resolve({ ctx }) {
       return await prisma.pollQuestion.findMany({
         where: {
-          ownerToken: ctx.token,
+          ownerToken: ctx.token || "no-tokens",
         },
       });
     },
