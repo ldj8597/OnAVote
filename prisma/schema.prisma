@@ -20,10 +20,12 @@ model PollQuestion {
 
   question String @db.LongText
 
-  // ownerToken String @db.MediumText
+  ownerToken String
 
   options Option[]
   votes   Vote[]
+
+  @@index([ownerToken])
 }
 
 model Option {

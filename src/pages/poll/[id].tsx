@@ -8,7 +8,6 @@ import { NextPageWithLayout } from "../_app";
 type FormValues = {
   questionId: string;
   optionId: string;
-  option: string;
 };
 
 const QuestionPage: NextPageWithLayout = () => {
@@ -17,7 +16,6 @@ const QuestionPage: NextPageWithLayout = () => {
   const { mutate } = trpc.useMutation("questions.vote", {
     onSuccess: (data) => {
       client.invalidateQueries("questions.by_id");
-      // console.log("Success on vote", data);
       setVoted(true);
     },
   });
@@ -25,7 +23,7 @@ const QuestionPage: NextPageWithLayout = () => {
   const { id } = query;
   const { register, handleSubmit } = useForm<FormValues>();
   const onSubmit = (data: FormValues) => {
-    // console.log(data);
+    console.log(data);
     mutate(data);
   };
 
@@ -45,27 +43,40 @@ const QuestionPage: NextPageWithLayout = () => {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-2xl fonot-bold">{data?.question}</h1>
+      {data.isOwner && (
+        <div className="flex flex-col gap-3">
+          <h3 className="bg-red-500 text-white py-2 text-center">
+            You made this!
+          </h3>
+          <button className="w-full" type="button">
+            Delete
+          </button>
+        </div>
+      )}
+      <h1 className="text-2xl fonot-bold">{data.question?.question}</h1>
       <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
-        <input {...register("questionId")} type="hidden" value={data?.id} />
-        {data?.options.map((option) => (
+        <input
+          {...register("questionId")}
+          type="hidden"
+          value={data.question?.id}
+        />
+        {data.question?.options.map((option) => (
           <div key={option.id}>
-            <input {...register("optionId")} type="hidden" value={option.id} />
             <label className="flex items-center gap-3" htmlFor="option">
               <div className="border border-indigo-500 rounded px-4 py-2 flex justify-between flex-1">
                 <span>{option.text}</span>
                 <span>
-                  {option._count?.votes}/{data._count.votes}
+                  {option._count?.votes}/{data.question?._count.votes}
                 </span>
               </div>
               {!voted && (
                 <input
                   className="text-slate-400 focus:ring-slate-400"
-                  {...register("option", {
+                  {...register("optionId", {
                     required: true,
                   })}
                   type="radio"
-                  value={option.text}
+                  value={option.id}
                 />
               )}
             </label>

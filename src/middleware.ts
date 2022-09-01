@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 
 export function middleware(request: NextRequest) {
-  console.log("---------------------------------------------------");
-  console.log(`middlware is running on ${request.nextUrl.pathname}`);
+  // console.log("---------------------------------------------------");
+  // console.log(`middlware is running on ${request.nextUrl.pathname}`);
 
   const response = NextResponse.next();
   const cookie = request.cookies.get("votey-token");

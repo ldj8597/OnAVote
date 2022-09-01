@@ -1,11 +1,12 @@
 // This file contains the root router of tRPC-backend
 import * as trpc from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 import { resolve } from "path";
 import { z } from "zod";
 import { prisma } from "../../db/client";
+import { createRouter } from "../context";
 
-export const questionRouter = trpc
-  .router()
+export const questionRouter = createRouter()
   .query("all", {
     async resolve(req) {
       return await prisma.pollQuestion.findMany();
@@ -13,8 +14,8 @@ export const questionRouter = trpc
   })
   .query("by_id", {
     input: z.object({ id: z.string() }),
-    async resolve({ input }) {
-      return await prisma.pollQuestion.findUnique({
+    async resolve({ input, ctx }) {
+      const question = await prisma.pollQuestion.findUnique({
         where: {
           id: input.id,
         },
@@ -35,6 +36,13 @@ export const questionRouter = trpc
           },
         },
       });
+
+      const isOwner = question?.ownerToken === ctx.token;
+
+      return {
+        question,
+        isOwner,
+      };
     },
   })
   .mutation("create", {
@@ -42,10 +50,16 @@ export const questionRouter = trpc
       question: z.string().min(5).max(600),
       options: z.object({ text: z.string() }).array().min(2),
     }),
-    async resolve({ input }) {
+    async resolve({ input, ctx }) {
+      console.log(ctx.token, " hit a api to create poll");
+      if (!ctx.token) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       return await prisma.pollQuestion.create({
         data: {
           question: input.question,
+          ownerToken: ctx.token,
           options: {
             create: input.options,
           },
@@ -57,9 +71,9 @@ export const questionRouter = trpc
     input: z.object({
       questionId: z.string(),
       optionId: z.string(),
-      option: z.string(),
     }),
-    async resolve({ input }) {
+    async resolve({ input, ctx }) {
+      console.log(ctx.token, " hit a api to vote");
       return await prisma.vote.create({
         data: {
           optionId: input.optionId,
