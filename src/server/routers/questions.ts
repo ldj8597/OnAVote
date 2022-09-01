@@ -12,6 +12,15 @@ export const questionRouter = createRouter()
       return await prisma.pollQuestion.findMany();
     },
   })
+  .query("my-poll", {
+    async resolve({ ctx }) {
+      return await prisma.pollQuestion.findMany({
+        where: {
+          ownerToken: ctx.token,
+        },
+      });
+    },
+  })
   .query("by_id", {
     input: z.object({ id: z.string() }),
     async resolve({ input, ctx }) {
