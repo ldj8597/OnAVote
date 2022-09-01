@@ -18,9 +18,12 @@ model PollQuestion {
 
   endsAt DateTime?
 
-  question String   @db.LongText
-  options  Option[]
-  votes    Vote[]
+  question String @db.LongText
+
+  // ownerToken String @db.MediumText
+
+  options Option[]
+  votes   Vote[]
 }
 
 model Option {

@@ -19,7 +19,20 @@ export const questionRouter = trpc
           id: input.id,
         },
         include: {
-          options: true,
+          _count: {
+            select: {
+              votes: true,
+            },
+          },
+          options: {
+            include: {
+              _count: {
+                select: {
+                  votes: true,
+                },
+              },
+            },
+          },
         },
       });
     },
@@ -27,11 +40,30 @@ export const questionRouter = trpc
   .mutation("create", {
     input: z.object({
       question: z.string().min(5).max(600),
+      options: z.object({ text: z.string() }).array().min(2),
     }),
     async resolve({ input }) {
       return await prisma.pollQuestion.create({
         data: {
           question: input.question,
+          options: {
+            create: input.options,
+          },
+        },
+      });
+    },
+  })
+  .mutation("vote", {
+    input: z.object({
+      questionId: z.string(),
+      optionId: z.string(),
+      option: z.string(),
+    }),
+    async resolve({ input }) {
+      return await prisma.vote.create({
+        data: {
+          optionId: input.optionId,
+          pollQuestionId: input.questionId,
         },
       });
     },
