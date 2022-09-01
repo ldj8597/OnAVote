@@ -8,7 +8,7 @@ const links = [
     target: "/",
   },
   {
-    text: "Polls",
+    text: "Create",
     target: "/poll",
   },
 ];

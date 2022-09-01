@@ -23,7 +23,7 @@ const QuestionPage: NextPageWithLayout = () => {
   const { id } = query;
   const { register, handleSubmit } = useForm<FormValues>();
   const onSubmit = (data: FormValues) => {
-    console.log(data);
+    // console.log(data);
     mutate(data);
   };
 

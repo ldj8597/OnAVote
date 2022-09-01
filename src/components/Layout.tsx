@@ -1,3 +1,4 @@
+import Head from "next/head";
 import React, { ReactElement } from "react";
 import Header from "./Header";
 
@@ -7,9 +8,14 @@ interface Props {
 
 function Layout({ children }: Props) {
   return (
-    <div className="max-w-2xl mx-auto px-5 py-5">
-      <Header />
-      {children}
+    <div>
+      <Head>
+        <title>Votey</title>
+      </Head>
+      <div className="max-w-2xl mx-auto px-5 py-5">
+        <Header />
+        {children}
+      </div>
     </div>
   );
 }
