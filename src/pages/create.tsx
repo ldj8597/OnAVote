@@ -1,16 +1,16 @@
 import { ReactElement, useState, useEffect } from "react";
-import Layout from "../../components/Layout";
-import { NextPageWithLayout } from "../_app";
+import Layout from "../components/Layout";
+import { NextPageWithLayout } from "./_app";
 import * as React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../utils/trpc";
 import { useRouter } from "next/router";
 import clsx from "clsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreatePollSchema,
   createPollSchema,
-} from "../../shared/create-poll-schema";
+} from "../shared/create-poll-schema";
 
 const Create: NextPageWithLayout = () => {
   const [endDateEnabled, setEndDateEnabled] = useState(false);
