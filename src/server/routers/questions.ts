@@ -25,6 +25,10 @@ export const questionRouter = createRouter()
   .query("by_id", {
     input: z.object({ id: z.string() }),
     async resolve({ input, ctx }) {
+      if (!ctx.token) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       const question = await prisma.pollQuestion.findUnique({
         where: {
           id: input.id,
@@ -47,11 +51,23 @@ export const questionRouter = createRouter()
         },
       });
 
-      const isOwner = question?.ownerToken === ctx.token;
+      if (!question) return;
+
+      const isOwner = question.ownerToken === ctx.token;
+
+      const voted = Boolean(
+        await prisma.vote.findFirst({
+          where: {
+            pollQuestionId: question.id,
+            voterToken: ctx.token,
+          },
+        })
+      );
 
       return {
         question,
         isOwner,
+        voted,
       };
     },
   })
@@ -63,8 +79,6 @@ export const questionRouter = createRouter()
     // }),
     input: createPollSchema,
     async resolve({ input, ctx }) {
-      console.log(ctx.token, " hit a api to create poll");
-      console.log(input.endsAt);
       if (!ctx.token) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -86,11 +100,15 @@ export const questionRouter = createRouter()
       optionId: z.string(),
     }),
     async resolve({ input, ctx }) {
-      console.log(ctx.token, " hit a api to vote");
+      if (!ctx.token) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
       return await prisma.vote.create({
         data: {
           optionId: input.optionId,
           pollQuestionId: input.questionId,
+          voterToken: ctx.token,
         },
       });
     },

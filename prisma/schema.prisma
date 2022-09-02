@@ -44,4 +44,9 @@ model Vote {
   optionId       String
   question       PollQuestion @relation(fields: [pollQuestionId], references: [id], onDelete: Cascade)
   pollQuestionId String
+
+  voterToken String
+
+  @@index([voterToken])
+  @@index([pollQuestionId])
 }

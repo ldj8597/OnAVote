@@ -71,7 +71,7 @@ const Create: NextPageWithLayout = () => {
     <div>
       <h2 className="text-2xl font-bold mb-5 text-center">Create Poll</h2>
       <form
-        className="flex flex-col gap-6 px-5 py-5 bg-slate-800 rounded-md shadow-md"
+        className="flex flex-col gap-6 px-9 py-9 bg-slate-800 rounded-md shadow-md"
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* Title & Options */}

@@ -15,7 +15,10 @@ export const createPollSchema = z.object({
     .array()
     .min(2, { message: "Poll Must have 2 or more options" })
     .max(20, { message: "Poll must have 20 or fewer options" }),
-  endsAt: z.date().nullish(),
+  endsAt: z
+    .date()
+    .min(new Date(), { message: "End date can not be before today" })
+    .nullish(),
 });
 
 export type CreatePollSchema = z.infer<typeof createPollSchema>;

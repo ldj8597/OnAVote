@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 const links = [
   {
-    text: "Home",
+    text: "Poll",
     target: "/",
   },
   {
@@ -17,7 +17,7 @@ function Header() {
   const router = useRouter();
 
   return (
-    <div className="flex items-center justify-between mb-5">
+    <div className="flex items-center justify-between mb-10">
       <Link href="/">
         <a>
           <h1 className="text-4xl text-indigo-500 font-bold">Votey</h1>
