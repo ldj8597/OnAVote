@@ -53,8 +53,13 @@ const QuestionPage: NextPageWithLayout = () => {
           </button>
         </div>
       )}
-      <h1 className="text-2xl fonot-bold">{data.question?.question}</h1>
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="flex flex-col gap-6 px-5 py-5 bg-slate-800 rounded-md shadow-md"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <h1 className="text-2xl text-white fonot-bold">
+          {data.question?.question}
+        </h1>
         <input
           {...register("questionId")}
           type="hidden"
@@ -63,15 +68,9 @@ const QuestionPage: NextPageWithLayout = () => {
         {data.question?.options.map((option) => (
           <div key={option.id}>
             <label className="flex items-center gap-3" htmlFor="option">
-              <div className="border border-indigo-500 rounded px-4 py-2 flex justify-between flex-1">
-                <span>{option.text}</span>
-                <span>
-                  {option._count?.votes}/{data.question?._count.votes}
-                </span>
-              </div>
               {!voted && (
                 <input
-                  className="text-slate-400 focus:ring-slate-400"
+                  className="text-indigo-500 focus:ring-indigo-500 bg-slate-300"
                   {...register("optionId", {
                     required: true,
                   })}
@@ -79,6 +78,14 @@ const QuestionPage: NextPageWithLayout = () => {
                   value={option.id}
                 />
               )}
+              <div className="flex gap-3">
+                <span className="text-white">{option.text}</span>
+                {voted && (
+                  <span className="text-slate-200">
+                    {option._count?.votes}/{data.question?._count.votes}
+                  </span>
+                )}
+              </div>
             </label>
           </div>
         ))}
