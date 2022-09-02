@@ -58,9 +58,11 @@ export const questionRouter = createRouter()
     input: z.object({
       question: z.string().min(5).max(600),
       options: z.object({ text: z.string() }).array().min(2),
+      endsAt: z.date().nullish(),
     }),
     async resolve({ input, ctx }) {
       console.log(ctx.token, " hit a api to create poll");
+      console.log(input.endsAt);
       if (!ctx.token) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }

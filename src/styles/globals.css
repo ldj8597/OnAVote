@@ -21,6 +21,11 @@
     @apply w-full rounded-lg shadow-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500;
   }
 
+  [type="text"],
+  [type="email"] {
+    @apply placeholder:text-slate-400 placeholder:text-sm;
+  }
+
   [type="submit"],
   [type="button"] {
     @apply py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;

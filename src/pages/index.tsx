@@ -15,11 +15,16 @@ const Home: NextPageWithLayout = () => {
     <div className="flex flex-col gap-14">
       <div>
         <h2 className="text-2xl font-bold mb-5">Active Polls</h2>
-        <ul className="space-y-3 pl-5 list-disc">
+        <ul className="pl-5 space-y-4">
           {all.data.map((q) => (
             <li key={q.id}>
               <Link href={`/poll/${q.id}`}>
-                <a className="text-lg">{q.question}</a>
+                <a className="flex flex-col">
+                  <span className="text-lg">{q.question}</span>
+                  <span className="text-sm text-slate-500">
+                    created at {q.createdAt.toLocaleDateString()}
+                  </span>
+                </a>
               </Link>
             </li>
           ))}
@@ -31,7 +36,12 @@ const Home: NextPageWithLayout = () => {
           {mine.data.map((q) => (
             <li key={q.id}>
               <Link href={`/poll/${q.id}`}>
-                <a className="text-lg">{q.question}</a>
+                <a className="flex flex-col">
+                  <span className="text-lg">{q.question}</span>
+                  <span className="text-sm text-slate-500">
+                    created at {q.createdAt.toLocaleDateString()}
+                  </span>
+                </a>
               </Link>
             </li>
           ))}
