@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import { NextPageWithLayout } from "../_app";
 import * as React from "react";
@@ -6,14 +6,11 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { trpc } from "../../utils/trpc";
 import { useRouter } from "next/router";
 import clsx from "clsx";
-
-type FormValues = {
-  question: string;
-  option: {
-    text: string;
-  }[];
-  endsAt?: Date;
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  CreatePollSchema,
+  createPollSchema,
+} from "../../shared/create-poll-schema";
 
 const Create: NextPageWithLayout = () => {
   const [endDateEnabled, setEndDateEnabled] = useState(false);
@@ -23,43 +20,52 @@ const Create: NextPageWithLayout = () => {
     control,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<CreatePollSchema>({
     mode: "onBlur",
     defaultValues: {
       question: "",
-      option: [{ text: "" }, { text: "" }],
+      options: [{ text: "" }, { text: "" }],
+      endsAt: null,
     },
+    resolver: zodResolver(createPollSchema),
   });
+
   const { fields, append, remove } = useFieldArray({
-    name: "option",
+    name: "options",
     control,
-    rules: {
-      minLength: 2,
-    },
   });
 
   const client = trpc.useContext();
   const { mutate, isLoading } = trpc.useMutation("questions.create", {
     onSuccess: (data) => {
-      // console.log("Success on creating Poll", data);
       client.invalidateQueries("questions.all");
       reset();
-      router.replace(`/poll/${data.id}`);
+      router.push(`/poll/${data.id}`);
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    // console.log(data);
-    if (data.option.length < 2) {
-      return console.log("at least 2 options are required");
-    }
+  const onSubmit = (data: CreatePollSchema) => {
+    console.log("submitting poll");
+    console.log(data);
     mutate({
       question: data.question,
-      options: data.option,
-      endsAt: endDateEnabled ? data.endsAt : null,
+      options: data.options,
+      endsAt: data.endsAt,
     });
   };
+
+  useEffect(() => {
+    if (!endDateEnabled) {
+      setValue("endsAt", null);
+    }
+  }, [endDateEnabled, setValue]);
+
+  useEffect(() => {
+    console.log(errors);
+  }, [errors]);
 
   return (
     <div>
@@ -70,63 +76,91 @@ const Create: NextPageWithLayout = () => {
       >
         {/* Title & Options */}
         <div className="flex flex-col gap-3">
+          {/* Title */}
           <label className="flex flex-col gap-3">
             <span className="text-white">Title</span>
             <input
-              // className="border px-3 py-2 rounded"
               type="text"
               id="question"
               placeholder="Type your question here"
-              {...register("question", {
-                required: true,
-              })}
+              disabled={isLoading}
+              {...register("question")}
             />
+            {errors.question?.message && (
+              <p className="text-red-300">{errors.question?.message}</p>
+            )}
           </label>
+          {/* Options */}
           <div className="flex flex-col gap-3">
             <h3 className="text-white">Options</h3>
             {fields.map((field, index) => {
               return (
-                <div key={field.id} className="relative flex gap-3">
-                  <input
-                    type="text"
-                    placeholder={`Option ${index + 1}`}
-                    {...register(`option.${index}.text` as const, {
-                      required: true,
-                    })}
-                  />
-                  {index > 1 && (
-                    <button
-                      className="absolute right-3 inset-y-1 w-6"
-                      onClick={() => {
-                        if (fields.length <= 2) {
-                          console.log("at least 2 options are required");
-                          return;
-                        }
-                        remove(index);
-                      }}
-                    >
-                      <div className="absolute w-2/3 h-px bg-slate-700 rotate-45" />
-                      <div className="absolute w-2/3 h-px bg-slate-700 -rotate-45" />
-                    </button>
+                <div key={field.id}>
+                  <div className="relative flex flex-col">
+                    <input
+                      type="text"
+                      placeholder={`Option ${index + 1}`}
+                      disabled={isLoading}
+                      {...register(`options.${index}.text` as const)}
+                    />
+                    {index > 1 && (
+                      <button
+                        className="absolute right-3 inset-y-1 w-6"
+                        onClick={() => {
+                          if (fields.length <= 2) {
+                            console.log("at least 2 options are required");
+                            return;
+                          }
+                          remove(index);
+                        }}
+                      >
+                        <div className="absolute w-2/3 h-px bg-slate-700 rotate-45" />
+                        <div className="absolute w-2/3 h-px bg-slate-700 -rotate-45" />
+                      </button>
+                    )}
+                  </div>
+                  {errors.options?.[index] && (
+                    <p className="text-red-300">
+                      {errors.options?.[index]?.text?.message}
+                    </p>
                   )}
                 </div>
               );
             })}
-
+            {errors.options?.message && (
+              <p className="text-red-300">{errors.options?.message}</p>
+            )}
             <button
-              className="w-1/5"
+              className="w-1/4 flex items-center justify-between"
               type="button"
+              disabled={isLoading}
               onClick={() =>
                 append({
                   text: "",
                 })
               }
             >
-              Add option
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+
+              <span>Add option</span>
             </button>
           </div>
         </div>
 
+        {/* Divider */}
         <div className="w-full h-px bg-slate-300 rounded-full" />
 
         {/* Settings */}
@@ -136,7 +170,7 @@ const Create: NextPageWithLayout = () => {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between">
               <p className="text-sm text-white">Set end date</p>
-              <button
+              <div
                 className={clsx("relative w-12 h-6 rounded-full", {
                   "bg-indigo-500": endDateEnabled,
                   "bg-slate-500": !endDateEnabled,
@@ -151,7 +185,7 @@ const Create: NextPageWithLayout = () => {
                     }
                   )}
                 />
-              </button>
+              </div>
             </div>
             <input
               className={clsx({ hidden: !endDateEnabled })}
@@ -160,11 +194,20 @@ const Create: NextPageWithLayout = () => {
               })}
               type="date"
             />
+            {endDateEnabled && errors.endsAt?.message && (
+              <p className="text-red-300">{errors.endsAt?.message}</p>
+            )}
           </div>
         </div>
 
         {/* Create */}
-        <input className="w-full font-semibold" type="submit" value="Create" />
+        <button
+          className="w-full font-semibold"
+          type="submit"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating..." : "Create"}
+        </button>
       </form>
     </div>
   );

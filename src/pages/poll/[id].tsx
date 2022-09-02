@@ -82,11 +82,7 @@ const QuestionPage: NextPageWithLayout = () => {
             </label>
           </div>
         ))}
-        <button
-          className="w-full disabled:bg-indigo-200"
-          type="submit"
-          disabled={voted}
-        >
+        <button className="w-full" type="submit" disabled={voted}>
           Vote
         </button>
       </form>

@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { resolve } from "path";
 import { z } from "zod";
 import { prisma } from "../../db/client";
+import { createPollSchema } from "../../shared/create-poll-schema";
 import { createRouter } from "../context";
 
 export const questionRouter = createRouter()
@@ -55,11 +56,12 @@ export const questionRouter = createRouter()
     },
   })
   .mutation("create", {
-    input: z.object({
-      question: z.string().min(5).max(600),
-      options: z.object({ text: z.string() }).array().min(2),
-      endsAt: z.date().nullish(),
-    }),
+    // input: z.object({
+    //   question: z.string().min(5).max(600),
+    //   options: z.object({ text: z.string() }).array().min(2).max(20),
+    //   endsAt: z.date().nullish(),
+    // }),
+    input: createPollSchema,
     async resolve({ input, ctx }) {
       console.log(ctx.token, " hit a api to create poll");
       console.log(input.endsAt);
