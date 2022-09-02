@@ -74,9 +74,14 @@ const PollPageContent = ({ id }: { id: string }) => {
           className="flex flex-col gap-6 px-9 py-9 bg-slate-800 rounded-md shadow-md"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <h1 className="text-2xl text-white fonot-bold">
-            {data?.question?.question}
-          </h1>
+          <div>
+            <h1 className="text-2xl text-white fonot-bold">
+              {data?.question?.question}
+            </h1>
+            <p className="text-slate-300 text-sm">
+              created at {data?.question.createdAt.toLocaleDateString()}
+            </p>
+          </div>
           <input
             {...register("questionId")}
             type="hidden"
@@ -109,7 +114,12 @@ const PollPageContent = ({ id }: { id: string }) => {
       {data?.voted && (
         <div className="bg-slate-800 px-9 py-9 flex flex-col gap-7 rounded-lg">
           {/* Title */}
-          <h2 className="text-white text-2xl">{data?.question.question}</h2>
+          <div>
+            <h2 className="text-white text-2xl">{data?.question.question}</h2>
+            <p className="text-slate-300 text-sm">
+              created at {data.question.createdAt.toLocaleDateString()}
+            </p>
+          </div>
 
           {/* Options */}
           <div className="flex flex-col gap-5">

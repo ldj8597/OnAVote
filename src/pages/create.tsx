@@ -48,8 +48,6 @@ const Create: NextPageWithLayout = () => {
   });
 
   const onSubmit = (data: CreatePollSchema) => {
-    console.log("submitting poll");
-    console.log(data);
     mutate({
       question: data.question,
       options: data.options,
@@ -62,10 +60,6 @@ const Create: NextPageWithLayout = () => {
       setValue("endsAt", null);
     }
   }, [endDateEnabled, setValue]);
-
-  useEffect(() => {
-    console.log(errors);
-  }, [errors]);
 
   return (
     <div>
@@ -107,10 +101,6 @@ const Create: NextPageWithLayout = () => {
                       <button
                         className="absolute right-3 inset-y-1 w-6"
                         onClick={() => {
-                          if (fields.length <= 2) {
-                            console.log("at least 2 options are required");
-                            return;
-                          }
                           remove(index);
                         }}
                       >
