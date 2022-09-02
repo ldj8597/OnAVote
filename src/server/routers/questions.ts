@@ -26,6 +26,9 @@ export const questionRouter = createRouter()
     input: z.object({ id: z.string() }),
     async resolve({ input, ctx }) {
       if (!ctx.token) {
+        console.log("----------------------------------");
+        console.log("               no token           ");
+        console.log("----------------------------------");
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 

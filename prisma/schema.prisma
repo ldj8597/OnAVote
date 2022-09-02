@@ -47,6 +47,7 @@ model Vote {
 
   voterToken String
 
+  @@unique([voterToken, pollQuestionId])
   @@index([voterToken])
   @@index([pollQuestionId])
 }

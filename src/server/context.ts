@@ -7,6 +7,9 @@ export async function createContext({
   req,
   res,
 }: trpcNext.CreateNextContextOptions) {
+  console.log("--------------");
+  console.log("return context");
+  console.log("--------------");
   return {
     token: req.cookies["votey-token"],
   };

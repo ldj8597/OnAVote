@@ -28,13 +28,13 @@ function VoteForm({ id }: Props) {
     mutate(data);
   };
 
-  //   if (isLoading) {
-  //     return <div>Loading...</div>;
-  //   }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  //   if (!isLoading && !data) {
-  //     return <div>Poll not found</div>;
-  //   }
+  if (!isLoading && !data) {
+    return <div>Poll not found</div>;
+  }
 
   return (
     <form
